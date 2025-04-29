@@ -5,7 +5,7 @@ import Title from '../components/Title'
 import ProdcutItem from '../components/ProdcutItem'
 
 const Collection = () => {
-  const {products} =useContext(ShopContext)
+  const {products,showSearch,search} =useContext(ShopContext)
   const [showFilter,setShowFilter] =useState(false)
   const [fiterProducts,setFilterProducts] =useState([]);
   const [category,setCategory] =useState([])
@@ -34,6 +34,10 @@ const toggleSubCategory = (e) => {
 // filter
   const applyFilter = () => {
     let productCopy = [...products]; 
+
+    if(showSearch && search){
+      productCopy =productCopy.filter(item=>item.name.toLowerCase().includes(search.toLowerCase()))
+    }
   
     if (category.length > 0) {
       productCopy = productCopy.filter(item => category.includes(item.category));
@@ -68,7 +72,7 @@ const toggleSubCategory = (e) => {
   useEffect(() => {
     applyFilter();
     
-  }, [products,category, subCategory]);
+  }, [products,category, subCategory,search,showSearch]);
 
   // apply sorting
   useEffect(() => {
