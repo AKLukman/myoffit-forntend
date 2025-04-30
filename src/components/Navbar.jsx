@@ -33,8 +33,17 @@ const Navbar = () => {
             <img src={assets.profile_icon} className='w-5 cursor-pointer'></img>
         <div className='group-hover:block hidden absolute dropdown-menu right-0 pt-4'>
             <div className='flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-500 rounded'>
-                <p className='hover:text-black cursor-pointer'>Profile</p>
-                <p className='hover:text-black cursor-pointer'>Orders</p>
+                
+                <NavLink to={'/profile'}    className={({ isActive }) =>
+                  `cursor-pointer hover:text-black ${isActive ? 'border-b-2 border-black font-bold text-black w-1/2' : ''}`
+                }>Profile</NavLink>
+                <NavLink to={'/orders'}    className={({ isActive }) =>
+                  `cursor-pointer hover:text-black ${isActive ? 'border-b-2 border-black font-bold text-black w-1/2' : ''}`
+                }>Orders</NavLink>
+                <NavLink to={'/login'}    className={({ isActive }) =>
+                  `cursor-pointer hover:text-black ${isActive ? 'border-b-2 border-black font-bold text-black w-1/2' : ''}`
+                }>Login</NavLink>
+               
                 <p className='hover:text-black cursor-pointer'>Logout</p>
             </div>
         </div>
