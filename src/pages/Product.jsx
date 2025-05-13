@@ -3,26 +3,33 @@ import { useParams } from 'react-router-dom'
 import { ShopContext } from '../context/ShopContext';
 import { assets } from '../assets/assets';
 import RelatdeProducts from '../components/RelatdeProducts';
+import { useGetSingleProductQuery } from '../redux/features/products/productsManagementApi';
 
 const Product = () => {
   const {productId} =useParams();
+  const {data:productData} =useGetSingleProductQuery(productId);
+  
   const {products,currency, addToCart,cartItem} =useContext(ShopContext)
-  const [productData,setProductData] =useState(false)
-  const [image,setImage] =useState("")
+  // const [productData,setProductData] =useState(false)
+  const [image,setImage] =useState('')
+  
+  
+ 
   const [size,setSize] =useState("")
+  const productSizes =['L',"M","S",'XS']
 
-  const fetchProductData =async()=>{
-    products.map(item=>{
-      if(item._id === productId){
-        setProductData(item)
-        setImage(item.image[0])
-        return null
-      }
-    })
-  }
-  useEffect(()=>{
-    fetchProductData()
-  },[productId])
+  // const fetchProductData =async()=>{
+  //   products.map(item=>{
+  //     if(item._id === productId){
+  //       setProductData(item)
+  //       setImage(item.image[0])
+  //       return null
+  //     }
+  //   })
+  // }
+  // useEffect(()=>{
+  //   fetchProductData()
+  // },[productId])
   return productData? (
     <div className='border-t-2 pt-10 transition-opacity ease-in duration-500 opacity-100'>
       {/* product data */}
@@ -31,18 +38,18 @@ const Product = () => {
         <div className='flex flex-1 flex-col-reverse gap-3 sm:flex-row'>
           <div className='flex sm:flex-col overflow-x-auto sm:overflow-y-scroll justify-between sm:justify-normal sm:w-[18.7%] w-full'>
             {
-              productData.image.map((item,index)=>(
+              productData?.data?.images?.map((item,index)=>(
                <img onClick={()=>setImage(item)} className='w-24 sm:w-full sm:mb-3 flex-shrink-0 cursor-pointer' src={item} key={index} alt='images'></img>
               ))
             }
           </div>
           <div className='w-full sm:w-[80%]'>
-            <img className='w-full h-auto' src={image} alt="" />
+            <img className='w-full h-auto' src={image || productData?.data?.images[0]} alt="product-image" />
           </div>
         </div>
         {/* product info */}
         <div className='flex-1'>
-          <h1 className='font-medium text-2xl mt-2'>{productData.name}</h1>
+          <h1 className='font-medium text-2xl mt-2'>{productData.data.name}</h1>
           <div className='flex items-center gap-1 mt-2'>
             <img src={assets.star_icon} alt="" className="w-3 5" />
             <img src={assets.star_icon} alt="" className="w-3 5" />
@@ -51,19 +58,19 @@ const Product = () => {
             <img src={assets.star_dull_icon} alt="" className="w-3 5" />
             <p className='pl-2'>(122)</p>
           </div>
-          <p className='mt-5 text-3xl font-medium'>{currency}{productData.price}</p>
-          <p className='mt-5 text-gray-500 md:w-4/5'>{productData.description}</p>
+          <p className='mt-5 text-3xl font-medium'>${productData.data.price}</p>
+          <p className='mt-5 text-gray-500 md:w-4/5'>{productData.data.description}</p>
           <div className='flex flex-col my-8 gap-4'>
             <p>Select size</p>
             <div className='flex gap-2'>
               {
-                productData.sizes.map((item,index)=>(
+                productSizes.map((item,index)=>(
                   <button onClick={()=>setSize(item)} className={`border py-2 px-4 bg-gray-100 ${item===size?"border-orange-500":""}`} key={index}>{item}</button>
                 ))
               }
             </div>
           </div>
-          <button onClick={()=>addToCart(productData?._id,size)} className='bg-black text-white px-8 py-3 text-sm active:bg-gray-700'>ADD TO CART</button>
+          <button onClick={()=>addToCart(productData?.data?._id,size)} className='bg-black text-white px-8 py-3 text-sm active:bg-gray-700'>ADD TO CART</button>
           <hr className='mt-8 sm:w-4/5' />
           <div className='text-sm mt-5 text-gray-500 flex flex-col gap-1'>
             <p>100% original product.</p>

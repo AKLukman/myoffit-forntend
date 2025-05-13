@@ -2,15 +2,17 @@ import React, { useContext, useEffect, useState } from 'react'
 import { ShopContext } from '../context/ShopContext'
 import Title from './Title'
 import ProdcutItem from './ProdcutItem'
+import { useGetAllProductsQuery } from '../redux/features/products/productsManagementApi'
 
 const BestSeller = () => {
     const {products} =useContext(ShopContext)
+    const {data:productData} =useGetAllProductsQuery(undefined)
     const [bestSeller,setBestSeller] =useState([])
     console.log(bestSeller)
 
     useEffect(()=>{
-        const bestProduct = products.filter((item)=>item.bestseller)
-        setBestSeller(bestProduct.slice(0,5))
+        const bestProduct = productData?.data?.filter((item)=>item.bestSellingProduct)
+        setBestSeller(bestProduct?.slice(0,5))
     },[])
   return (
     <div className='my-10'>
@@ -21,7 +23,7 @@ const BestSeller = () => {
        {/* latest products */}
             <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 gap-y-6'>
               {
-                  bestSeller.map((product)=>(
+                  bestSeller?.map((product)=>(
                       <ProdcutItem product={product} key={product._id}></ProdcutItem>
                   ))
               }

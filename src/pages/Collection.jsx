@@ -3,9 +3,15 @@ import { ShopContext } from '../context/ShopContext'
 import { assets } from '../assets/assets'
 import Title from '../components/Title'
 import ProdcutItem from '../components/ProdcutItem'
+import { useGetAllProductsQuery } from '../redux/features/products/productsManagementApi'
+
 
 const Collection = () => {
   const {products,showSearch,search} =useContext(ShopContext)
+  
+  
+ const {data:productsData,isLoading,isFetching} =useGetAllProductsQuery(undefined)
+  
   const [showFilter,setShowFilter] =useState(false)
   const [fiterProducts,setFilterProducts] =useState([]);
   const [category,setCategory] =useState([])
@@ -33,6 +39,7 @@ const toggleSubCategory = (e) => {
 
 // filter
   const applyFilter = () => {
+    
     let productCopy = [...products]; 
 
     if(showSearch && search){
@@ -129,8 +136,11 @@ const toggleSubCategory = (e) => {
         {/* products */}
         <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6'>
               {
-                fiterProducts.map((item)=>(
-                  <ProdcutItem product={item} key={item._id}></ProdcutItem>
+                // productsData?.data?.map((item)=>(
+                //   <ProdcutItem product={item} key={item._id}></ProdcutItem>
+                // ))
+                productsData?.data?.map((item)=>(
+                  <ProdcutItem product={item} key={item?._id}></ProdcutItem>
                 ))
               }
         </div>

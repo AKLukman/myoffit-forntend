@@ -2,10 +2,27 @@ import React, { useContext, useState } from 'react'
 import {assets} from "../assets/assets"
 import { Link, NavLink } from 'react-router-dom'
 import { ShopContext } from '../context/ShopContext'
+import { useAppDispatch, useAppSelector } from '../redux/hooks'
+import { logout, useCurrentToken } from '../redux/features/auth/authSlice'
+import { verifyToken } from '../utils/verifyToken'
 
 const Navbar = () => {
   const [visible,setVisible] =useState(false)
   const {setShowSearch,getCartCount} =useContext(ShopContext)
+  const token = useAppSelector(useCurrentToken);
+  const dispatch = useAppDispatch();
+
+  let user;
+  if (token) {
+    user = verifyToken(token);
+    
+  }
+
+  const handleLogout = () => {
+    dispatch(logout());
+  };
+
+
   return (
     <div className='flex items-center justify-between py-5 font-medium'>
       <Link to={'/'}><img src={assets.logo} className='w-16' alt='logo'/></Link>
@@ -26,6 +43,12 @@ const Navbar = () => {
             <p className='uppercase'>Contact</p>
             <hr  className='w-2/4 border-none h-[1.5px] bg-gray-700 hidden'/>
         </NavLink>
+        {user && (user?.role === 'admin' || user?.role === 'superAdmin') && (
+          <NavLink to="/Dashboard" className="flex flex-col items-center gap-1">
+            <p className="uppercase">Dashboard</p>
+            <hr className="w-2/4 border-none h-[1.5px] bg-gray-700 hidden" />
+          </NavLink>
+        )}
       </ul>
       <div className='flex items-center gap-6'>
         <img onClick={()=>setShowSearch(true)} src={assets.search_icon} className='w-5 cursor-pointer'></img>
@@ -40,11 +63,13 @@ const Navbar = () => {
                 <NavLink to={'/orders'}    className={({ isActive }) =>
                   `cursor-pointer hover:text-black ${isActive ? 'border-b-2 border-black font-bold text-black w-1/2' : ''}`
                 }>Orders</NavLink>
-                <NavLink to={'/login'}    className={({ isActive }) =>
-                  `cursor-pointer hover:text-black ${isActive ? 'border-b-2 border-black font-bold text-black w-1/2' : ''}`
-                }>Login</NavLink>
+                {
+                  user?<p onClick={handleLogout} className='hover:text-black cursor-pointer'>Logout</p>:<NavLink to={'/login'}    className={({ isActive }) =>
+                    `cursor-pointer hover:text-black ${isActive ? 'border-b-2 border-black font-bold text-black w-1/2' : ''}`
+                  }>Login</NavLink>
+                }
                
-                <p className='hover:text-black cursor-pointer'>Logout</p>
+                
             </div>
         </div>
 
@@ -66,6 +91,10 @@ const Navbar = () => {
             to="/collections">Collection</NavLink>
             <NavLink onClick={()=>setVisible(false)} className="pl-2 py-6 border"to="/about">About</NavLink>
             <NavLink onClick={()=>setVisible(false)} className="pl-2 py-6 border"to="/contact">Contact</NavLink>
+            {user && (user?.role === 'admin' || user?.role === 'superAdmin') && (
+              <NavLink onClick={()=>setVisible(false)} className="pl-2 py-6 border"to="/dashboard">Dashboard</NavLink>
+            )}
+            
            
           </div>
         </div>
